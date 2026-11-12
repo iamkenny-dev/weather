@@ -31,20 +31,38 @@ async function getWeather(latitude, longitude) {
 
 // ---------- When the person searches ----------
 form.addEventListener("submit", async (event) => {
-  event.preventDefault(); // stop the page reloading
+  event.preventDefault();
 
-  const city = input.value.trim();
-  if (city === "") return;
+  const text = input.value.trim();
+  if (text === "") return; // Risk 4: empty box
 
-  const places = await findPlaces(city);
-  console.log("Places found:", places);
+  const search = parseSearch(text); // Risk 6: "city, country"
 
-  if (places.length === 0) {
-    console.log("No places found");
+  if (!hasLetters(search.city)) {
+    // Risk 5: numbers only
+    console.log("Please type a city name, not numbers.");
     return;
   }
 
-  const place = places[0]; // the first (best) match
+  const places = await findPlaces(search.city);
+  if (places.length === 0) {
+    // Risk 1: not found
+    console.log(
+      `Couldn't find "${search.city}". Check the spelling or add the country.`,
+    );
+    return;
+  }
+
+  const matches = matchCountry(places, search.country);
+  if (matches.length === 0) {
+    // Risk 9: wrong country
+    console.log(`Couldn't find "${search.city}" in ${search.country}.`);
+    return;
+  }
+
+  const place = matches[0];
+  console.log("Place:", place.name, "|", place.admin1, "|", place.country); // Risk 8: full name
+
   const weather = await getWeather(place.latitude, place.longitude);
   console.log("Weather:", weather);
 });
@@ -64,13 +82,28 @@ function hasLetters(text) {
 }
 
 // ---------- 5. Keep only the places in the country the person typed ----------
-function matchCountry(places, country) {
-  if (country === "") return places;        // no country typed → keep them all
+// Nicknames people type → the official country code in the data
+const COUNTRY_ALIASES = {
+  uk: "gb",
+  britain: "gb",
+  "great britain": "gb",
+  usa: "us",
+  america: "us",
+  uae: "ae",
+  drc: "cd",
+};
 
-  const wanted = country.toLowerCase();
+// ---------- 5. Keep only places matching the country (or region) typed ----------
+function matchCountry(places, country) {
+  if (country === "") return places;
+
+  let wanted = country.toLowerCase();             // "UK" → "uk"
+  wanted = COUNTRY_ALIASES[wanted] ?? wanted;     // "uk" → "gb" (or unchanged if no nickname)
+
   return places.filter(
     (place) =>
       place.country?.toLowerCase() === wanted ||       // "nigeria"
-      place.country_code?.toLowerCase() === wanted     // "ng"
+      place.country_code?.toLowerCase() === wanted ||  // "gb"
+      place.admin1?.toLowerCase() === wanted           // region: "england", "ontario", "lagos"
   );
 }
