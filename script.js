@@ -1,6 +1,15 @@
 // ---------- Elements ----------
 const form = document.getElementById("search-form");
 const input = document.getElementById("city-input");
+const message = document.getElementById("message");
+const card = document.getElementById("weather-card");
+const placeName = document.getElementById("place-name");
+const weatherIcon = document.getElementById("weather-icon");
+const temperature = document.getElementById("temperature");
+const condition = document.getElementById("condition");
+const feelsLike = document.getElementById("feels-like");
+const humidity = document.getElementById("humidity");
+const wind = document.getElementById("wind");
 
 // ---------- API addresses ----------
 const PLACE_API = "https://geocoding-api.open-meteo.com/v1/search";
@@ -107,3 +116,69 @@ function matchCountry(places, country) {
       place.admin1?.toLowerCase() === wanted           // region: "england", "ontario", "lagos"
   );
 }
+
+
+// ---------- 6. Weather code → words + icon ----------
+// Codes come from the World Meteorological Organization (WMO).
+const WEATHER_CODES = {
+  0: { label: "Clear sky", icon: "☀️", nightIcon: "🌙" },
+  1: { label: "Mainly clear", icon: "🌤️", nightIcon: "🌙" },
+  2: { label: "Partly cloudy", icon: "⛅", nightIcon: "☁️" },
+  3: { label: "Overcast", icon: "☁️" },
+  45: { label: "Fog", icon: "🌫️" },
+  48: { label: "Freezing fog", icon: "🌫️" },
+  51: { label: "Light drizzle", icon: "🌦️" },
+  53: { label: "Drizzle", icon: "🌦️" },
+  55: { label: "Heavy drizzle", icon: "🌧️" },
+  56: { label: "Freezing drizzle", icon: "🌧️" },
+  57: { label: "Heavy freezing drizzle", icon: "🌧️" },
+  61: { label: "Light rain", icon: "🌦️" },
+  63: { label: "Rain", icon: "🌧️" },
+  65: { label: "Heavy rain", icon: "🌧️" },
+  66: { label: "Freezing rain", icon: "🌧️" },
+  67: { label: "Heavy freezing rain", icon: "🌧️" },
+  71: { label: "Light snow", icon: "🌨️" },
+  73: { label: "Snow", icon: "🌨️" },
+  75: { label: "Heavy snow", icon: "❄️" },
+  77: { label: "Snow grains", icon: "🌨️" },
+  80: { label: "Light showers", icon: "🌦️" },
+  81: { label: "Showers", icon: "🌧️" },
+  82: { label: "Violent showers", icon: "⛈️" },
+  85: { label: "Snow showers", icon: "🌨️" },
+  86: { label: "Heavy snow showers", icon: "❄️" },
+  95: { label: "Thunderstorm", icon: "⛈️" },
+  96: { label: "Thunderstorm with hail", icon: "⛈️" },
+  99: { label: "Thunderstorm with heavy hail", icon: "⛈️" },
+};
+
+function describeWeather(code, isDay) {
+  const info = WEATHER_CODES[code] ?? { label: "Unknown", icon: "🌡️" };
+  const icon = !isDay && info.nightIcon ? info.nightIcon : info.icon;
+  return { label: info.label, icon: icon };
+}
+
+
+// ---------- 7. Place → "Lagos, Nigeria" / "London, England, United Kingdom" ----------
+function formatPlaceName(place) {
+  const parts = [place.name];
+  if (place.admin1 && place.admin1 !== place.name) parts.push(place.admin1);
+  if (place.country) parts.push(place.country);
+  return parts.join(", ");
+}
+
+// ---------- 8. Put the weather on the page ----------
+function showWeather(place, weather) {
+  const description = describeWeather(weather.weather_code, weather.is_day);
+
+  placeName.textContent = formatPlaceName(place);
+  weatherIcon.textContent = description.icon;
+  temperature.textContent = `${Math.round(weather.temperature_2m)}°C`;
+  condition.textContent = description.label;
+  feelsLike.textContent = `${Math.round(weather.apparent_temperature)}°C`;
+  humidity.textContent = `${weather.relative_humidity_2m}%`;
+  wind.textContent = `${Math.round(weather.wind_speed_10m)} km/h`;
+
+  message.textContent = "";  // clear the welcome message
+  card.hidden = false;       // reveal the card
+}
+
