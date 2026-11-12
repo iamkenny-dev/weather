@@ -73,7 +73,7 @@ form.addEventListener("submit", async (event) => {
   console.log("Place:", place.name, "|", place.admin1, "|", place.country); // Risk 8: full name
 
   const weather = await getWeather(place.latitude, place.longitude);
-  console.log("Weather:", weather);
+  showWeather(place, weather); // M4
 });
 
 
