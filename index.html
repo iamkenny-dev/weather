@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="app">
+        <h1>Weather</h1>
+
+        <!-- M1: the search form -->
+        <form id="search-form">
+            <label for="city-input">City</label>
+            <input id="city-input" type="text" placeholder="e.g. Lagos, Nigeria" autocomplete="off" maxlength="80"
+                aria-describedby="city-hint" required>
+            <button type="submit" id="search-button">Search</button>
+        </form>
+        <p id="city-hint" class="hint">Type a city, or city + country — e.g. Lagos, Nigeria</p>
+
+        <!-- Welcome / loading / error messages appear here -->
+        <p id="message" role="status">Search for a city to see its weather.</p>
+
+        <!-- The weather card: hidden until there's weather to show -->
+        <section id="weather-card" hidden>
+            <h2 id="place-name"></h2>
+            <p id="weather-icon" aria-hidden="true"></p>
+            <p id="temperature"></p>
+            <p id="condition"></p>
+            <ul class="details">
+                <li>Feels like <span id="feels-like"></span></li>
+                <li>Humidity <span id="humidity"></span></li>
+                <li>Wind <span id="wind"></span></li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
