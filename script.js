@@ -11,6 +11,7 @@ const condition = document.getElementById("condition");
 const feelsLike = document.getElementById("feels-like");
 const humidity = document.getElementById("humidity");
 const wind = document.getElementById("wind");
+const localTime = document.getElementById("local-time");
 
 // ---------- API addresses ----------
 const PLACE_API = "https://geocoding-api.open-meteo.com/v1/search";
@@ -131,6 +132,16 @@ function describeWeather(code, isDay) {
   return { label: info.label, icon: icon };
 }
 
+// ---------- 6b. Weather code → which "sky" theme the page uses ----------
+function skyFor(code, isDay) {
+  if (code >= 95) return "storm"; // thunderstorms
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return "rain";
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return "snow";
+  if (code === 45 || code === 48) return "fog";
+  if (code === 3) return "cloudy";
+  return isDay ? "day" : "night"; // clear or partly cloudy
+}
+
 // ---------- 7. Place → "Lagos, Nigeria" / "London, England, United Kingdom" ----------
 function formatPlaceName(place) {
   const parts = [place.name];
@@ -150,6 +161,9 @@ function showWeather(place, weather) {
   feelsLike.textContent = `${Math.round(weather.apparent_temperature)}°C`;
   humidity.textContent = `${weather.relative_humidity_2m}%`;
   wind.textContent = `${Math.round(weather.wind_speed_10m)} km/h`;
+  localTime.textContent = `Local time ${weather.time.slice(11, 16)}`; // "2026-11-13T00:30" → "00:30"
+
+  document.body.dataset.sky = skyFor(weather.weather_code, weather.is_day); // CSS restyles the page
 
   message.textContent = ""; // clear any old message
   message.className = "";

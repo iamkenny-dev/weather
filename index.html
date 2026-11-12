@@ -4,39 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather</title>
+    <title>Weather — Kenny</title>
+    <meta name="description" content="Type a city and see its weather right now.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300;1,9..144,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-    <main class="app">
-        <h1>Weather</h1>
+<body data-sky="default">
 
-        <!-- M1: the search form -->
-        <form id="search-form">
-            <label for="city-input">City</label>
-            <input id="city-input" type="text" placeholder="e.g. Lagos, Nigeria" autocomplete="off" maxlength="80"
-                aria-describedby="city-hint" required>
-            <button type="submit" id="search-button">Search</button>
+    <!-- Decorative weather effects (rain, stars). Drawn by CSS, ignored by screen readers. -->
+    <div class="sky-fx" aria-hidden="true"></div>
+
+    <main class="app">
+        <header class="top">
+            <h1 class="brand">Weather<span>.</span></h1>
+            <p class="tagline">Right now, anywhere</p>
+        </header>
+
+        <form id="search-form" class="search">
+            <label for="city-input" class="search-label">Search a city</label>
+            <div class="search-bar">
+                <input id="city-input" type="text" placeholder="e.g. Lagos, Nigeria" autocomplete="off" maxlength="80"
+                    aria-describedby="city-hint" required>
+                <button type="submit" id="search-button">Search</button>
+            </div>
+            <p id="city-hint" class="hint">Type a city, or city + country — e.g. Lagos, Nigeria</p>
         </form>
-        <p id="city-hint" class="hint">Type a city, or city + country — e.g. Lagos, Nigeria</p>
 
         <!-- Welcome / loading / error messages appear here -->
         <p id="message" role="status">Search for a city to see its weather.</p>
 
         <!-- The weather card: hidden until there's weather to show -->
-        <section id="weather-card" hidden>
-            <h2 id="place-name"></h2>
-            <p id="weather-icon" aria-hidden="true"></p>
-            <p id="temperature"></p>
-            <p id="condition"></p>
+        <section id="weather-card" class="card" hidden>
+            <h2 id="place-name" class="place"></h2>
+            <p id="local-time" class="local-time"></p>
+
+            <div class="now">
+                <p id="temperature" class="temp"></p>
+                <div class="sky-now">
+                    <p id="weather-icon" class="icon" aria-hidden="true"></p>
+                    <p id="condition" class="condition"></p>
+                </div>
+            </div>
+
             <ul class="details">
-                <li>Feels like <span id="feels-like"></span></li>
-                <li>Humidity <span id="humidity"></span></li>
-                <li>Wind <span id="wind"></span></li>
+                <li><span class="label">Feels like</span><span id="feels-like" class="value"></span></li>
+                <li><span class="label">Humidity</span><span id="humidity" class="value"></span></li>
+                <li><span class="label">Wind</span><span id="wind" class="value"></span></li>
             </ul>
         </section>
     </main>
+
+    <footer class="credit">
+        Data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · Day 3 of 60
+    </footer>
 
     <script src="script.js"></script>
 </body>
