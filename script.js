@@ -48,3 +48,29 @@ form.addEventListener("submit", async (event) => {
   const weather = await getWeather(place.latitude, place.longitude);
   console.log("Weather:", weather);
 });
+
+
+// ---------- 3. Split "Lagos, Nigeria" into city + country ----------
+function parseSearch(text) {
+  const parts = text.split(",");            // "Lagos, Nigeria" → ["Lagos", " Nigeria"]
+  const city = parts[0].trim();             // "Lagos"
+  const country = (parts[1] ?? "").trim();  // "Nigeria", or "" if no comma
+  return { city, country };
+}
+
+// ---------- 4. Does the text contain at least one letter? ----------
+function hasLetters(text) {
+  return /\p{L}/u.test(text);  // any letter, in any language
+}
+
+// ---------- 5. Keep only the places in the country the person typed ----------
+function matchCountry(places, country) {
+  if (country === "") return places;        // no country typed → keep them all
+
+  const wanted = country.toLowerCase();
+  return places.filter(
+    (place) =>
+      place.country?.toLowerCase() === wanted ||       // "nigeria"
+      place.country_code?.toLowerCase() === wanted     // "ng"
+  );
+}
