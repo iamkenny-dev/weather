@@ -38,6 +38,7 @@ Day 3 of my 60-app challenge. Written before any code.
 | 10  | Person clicks Search many times quickly                                | Disable the button while loading                                                       |
 | 11  | City has spaces or accents ("Port Harcourt", "São Paulo")              | Make the text URL-safe before sending it                                               |
 | 12  | Very long text pasted into the box                                     | Limit the box to 80 characters                                                         |
+13 Person types a nickname for a country (UK, USA, DRC) → translate it with a lookup table
 
 ## 3. Flow in plain English
 
